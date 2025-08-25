@@ -1,0 +1,23 @@
+{
+  "name": "exercice-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sarobidy-fitia05/Exercice-API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sarobidy-fitia05/Exercice-API/issues"
+  },
+  "homepage": "https://github.com/Sarobidy-fitia05/Exercice-API#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
