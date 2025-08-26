@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Product Management API
+  version: 1.0.0
+
+paths:
+  /products:
+    get:
+      summary: Get a list of products
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+              examples:
+                multipleProducts:
+                  summary: Multiple products returned
+                  value:
+                    - name: "Lait"
+                      expiration_datetime: "2025-09-01T10:00:00Z"
+                      price: 2.5
+                    - name: "Pâtes"
+                      expiration_datetime: "2025-12-15T18:30:00Z"
+                      price: 1.2
+                emptyList:
+                  summary: No products found
+                  value: []
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Yaourt"
+        expiration_datetime:
+          type: string
+          format: date-time
+          example: "2025-08-31T23:59:59Z"
+        price:
+          type: number
+          format: float
+          example: 3.99
+      required:
+        - name
+        - expiration_datetime
+        - price
+
+  parameters:
+    limitParam:
+      name: limit
+      in: query
+      description: Maximum number of products to return
+      required: false
+      schema:
+        type: integer
+        example: 10
+
+    qParam:
+      name: q
+      in: query
+      description: Search term for filtering products
+      required: false
+      schema:
+        type: string
+        example: "lait"
