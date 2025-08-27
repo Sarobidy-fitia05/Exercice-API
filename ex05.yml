@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: Product & Order Management API
+  version: 1.0.0
+
+paths:
+  /products:
+    get:
+      tags:
+        - Products
+      summary: Get a list of products
+      parameters:
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/qParam'
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+              examples:
+                multipleProducts:
+                  summary: Multiple products returned
+                  value:
+                    - name: "Lait"
+                      expiration_datetime: "2025-09-01T10:00:00Z"
+                      price: 2.5
+                    - name: "Pâtes"
+                      expiration_datetime: "2025-12-15T18:30:00Z"
+                      price: 1.2
+                emptyList:
+                  summary: No products found
+                  value: []
+
+  /orders:
+    get:
+      tags:
+        - Orders
+      summary: Get paginated list of orders
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/sizeParam'
+      responses:
+        '200':
+          description: Paginated list of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+              examples:
+                multipleOrders:
+                  summary: Several orders
+                  value:
+                    - identifier: 101
+                      customer_name: "Alice Dupont"
+                      creation_datetime: "2025-08-25T14:30:00Z"
+                      total_amount: 120.50
+                    - identifier: 102
+                      customer_name: "Jean Martin"
+                      creation_datetime: "2025-08-26T10:15:00Z"
+                      total_amount: 75.00
+                emptyOrders:
+                  summary: No orders
+                  value: []
+
+    post:
+      tags:
+        - Orders
+      summary: Create a new order (requires Basic Auth)
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+            examples:
+              createOrder:
+                summary: Example new order
+                value:
+                  identifier: 103
+                  customer_name: "Paul Durand"
+                  creation_datetime: "2025-08-27T12:00:00Z"
+                  total_amount: 99.99
+      responses:
+        '201':
+          description: Order successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+              examples:
+                createdOrder:
+                  summary: Created order
+                  value:
+                    identifier: 103
+                    customer_name: "Paul Durand"
+                    creation_datetime: "2025-08-27T12:00:00Z"
+                    total_amount: 99.99
+        '401':
+          description: Unauthorized - authentication required
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Yaourt"
+        expiration_datetime:
+          type: string
+          format: date-time
+          example: "2025-08-31T23:59:59Z"
+        price:
+          type: number
+          format: float
+          example: 3.99
+      required:
+        - name
+        - expiration_datetime
+        - price
+
+    Order:
+      type: object
+      properties:
+        identifier:
+          type: integer
+          example: 101
+        customer_name:
+          type: string
+          example: "Alice Dupont"
+        creation_datetime:
+          type: string
+          format: date-time
+          example: "2025-08-25T14:30:00Z"
+        total_amount:
+          type: number
+          format: float
+          example: 120.50
+      required:
+        - identifier
+        - customer_name
+        - creation_datetime
+        - total_amount
+
+  parameters:
+    limitParam:
+      name: limit
+      in: query
+      description: Maximum number of products to return
+      required: false
+      schema:
+        type: integer
+        example: 10
+
+    qParam:
+      name: q
+      in: query
+      description: Search term for filtering products
+      required: false
+      schema:
+        type: string
+        example: "lait"
+
+    pageParam:
+      name: page
+      in: query
+      description: Page number of results
+      required: false
+      schema:
+        type: integer
+        example: 1
+
+    sizeParam:
+      name: size
+      in: query
+      description: Number of results per page
+      required: false
+      schema:
+        type: integer
+        example: 20
+
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
