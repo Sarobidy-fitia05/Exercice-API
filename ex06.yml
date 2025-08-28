@@ -1,0 +1,264 @@
+openapi: 3.0.3
+info:
+  title: User Profile Management API
+  version: 1.0.0
+
+paths:
+  /users/{id}:
+    get:
+      summary: Get a user profile by ID
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      responses:
+        '200':
+          description: User profile found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+              examples:
+                userExample:
+                  summary: Example of a user profile
+                  value:
+                    identifier: "USR-12345"
+                    first_name: "Alice"
+                    last_name: "Rasoa"
+                    birthdate: "1995-05-20"
+                    email: "alice.rasoa@example.com"
+                    address_street: "Rue Andrianampoinimerina"
+                    address_city: "Antananarivo"
+                    address_country: "Madagascar"
+                    address_postal_code: "101"
+                    needs_newsletter: true
+                    language: "fr"
+        '404':
+          description: User not found
+
+  /users:
+    post:
+      summary: Create new users (identifier auto-generated)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateUserProfile'
+            examples:
+              createUsers:
+                summary: Example creation payload
+                value:
+                  - first_name: "Alice"
+                    last_name: "Rasoa"
+                    birthdate: "1995-05-20"
+                    email: "alice.rasoa@example.com"
+                    address_street: "Rue Andrianampoinimerina"
+                    address_city: "Antananarivo"
+                    address_country: "Madagascar"
+                    address_postal_code: "101"
+                    needs_newsletter: true
+                    language: "fr"
+                  - first_name: "Jean"
+                    last_name: "Rakoto"
+                    birthdate: "1992-02-14"
+                    email: "jean.rakoto@example.com"
+                    address_street: "Avenue de l’Indépendance"
+                    address_city: "Antsirabe"
+                    address_country: "Madagascar"
+                    address_postal_code: "110"
+                    needs_newsletter: false
+                    language: "mg"
+      responses:
+        '201':
+          description: Users successfully created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserProfile'
+              examples:
+                createdUsers:
+                  summary: Example created users with identifiers
+                  value:
+                    - identifier: "USR-12345"
+                      first_name: "Alice"
+                      last_name: "Rasoa"
+                      birthdate: "1995-05-20"
+                      email: "alice.rasoa@example.com"
+                      address_street: "Rue Andrianampoinimerina"
+                      address_city: "Antananarivo"
+                      address_country: "Madagascar"
+                      address_postal_code: "101"
+                      needs_newsletter: true
+                      language: "fr"
+                    - identifier: "USR-12346"
+                      first_name: "Jean"
+                      last_name: "Rakoto"
+                      birthdate: "1992-02-14"
+                      email: "jean.rakoto@example.com"
+                      address_street: "Avenue de l’Indépendance"
+                      address_city: "Antsirabe"
+                      address_country: "Madagascar"
+                      address_postal_code: "110"
+                      needs_newsletter: false
+                      language: "mg"
+
+  /users/{id}/personalInfo:
+    put:
+      summary: Update only personal information of a user
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalInfo'
+            examples:
+              updatePersonalInfo:
+                summary: Example update personal info
+                value:
+                  first_name: "Alicia"
+                  last_name: "Rasoa"
+                  birthdate: "1995-05-20"
+                  email: "alicia.rasoa@example.com"
+      responses:
+        '200':
+          description: Updated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /users/{id}/address:
+    put:
+      summary: Update only address of a user
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Address'
+            examples:
+              updateAddress:
+                summary: Example update address
+                value:
+                  address_street: "Nouvelle Rue 123"
+                  address_city: "Fianarantsoa"
+                  address_country: "Madagascar"
+                  address_postal_code: "301"
+      responses:
+        '200':
+          description: Updated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /users/{id}/preferences:
+    put:
+      summary: Update only preferences of a user
+      parameters:
+        - $ref: '#/components/parameters/idParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preferences'
+            examples:
+              updatePreferences:
+                summary: Example update preferences
+                value:
+                  needs_newsletter: false
+                  language: "eng"
+      responses:
+        '200':
+          description: Updated user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+components:
+  schemas:
+    # ---- Subschemas ----
+    PersonalInfo:
+      type: object
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        birthdate:
+          type: string
+          format: date
+        email:
+          type: string
+          format: email
+      required:
+        - first_name
+        - last_name
+        - birthdate
+        - email
+
+    Address:
+      type: object
+      properties:
+        address_street:
+          type: string
+        address_city:
+          type: string
+        address_country:
+          type: string
+        address_postal_code:
+          type: string
+      required:
+        - address_street
+        - address_city
+        - address_country
+        - address_postal_code
+
+    Preferences:
+      type: object
+      properties:
+        needs_newsletter:
+          type: boolean
+        language:
+          type: string
+          enum: [mg, fr, eng]
+      required:
+        - needs_newsletter
+        - language
+
+    # ---- Create schema (no identifier) ----
+    CreateUserProfile:
+      allOf:
+        - $ref: '#/components/schemas/PersonalInfo'
+        - $ref: '#/components/schemas/Address'
+        - $ref: '#/components/schemas/Preferences'
+
+    # ---- Full UserProfile (includes identifier) ----
+    UserProfile:
+      allOf:
+        - $ref: '#/components/schemas/CreateUserProfile'
+        - type: object
+          properties:
+            identifier:
+              type: string
+          required:
+            - identifier
+
+  parameters:
+    idParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: Identifier of the user
+      example: "USR-12345"
