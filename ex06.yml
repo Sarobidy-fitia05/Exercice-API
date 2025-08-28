@@ -186,7 +186,7 @@ paths:
 
 components:
   schemas:
-    # ---- Subschemas ----
+    
     PersonalInfo:
       type: object
       properties:
@@ -235,14 +235,14 @@ components:
         - needs_newsletter
         - language
 
-    # ---- Create schema (no identifier) ----
+    
     CreateUserProfile:
       allOf:
         - $ref: '#/components/schemas/PersonalInfo'
         - $ref: '#/components/schemas/Address'
         - $ref: '#/components/schemas/Preferences'
 
-    # ---- Full UserProfile (includes identifier) ----
+    
     UserProfile:
       allOf:
         - $ref: '#/components/schemas/CreateUserProfile'
